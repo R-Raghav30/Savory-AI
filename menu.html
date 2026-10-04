@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Intelligent Menu | Savory AI</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <!-- HEADER & NAVBAR -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="brand">
+        <div class="brand-logo">✨</div>
+        <div class="brand-title">Savory <span>AI</span></div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/menu" class="nav-link active">Digital Menu</a>
+        <a href="/sommelier" class="nav-link">AI Sommelier</a>
+        <a href="/admin" class="nav-link">Kitchen Admin</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn btn-primary btn-sm" onclick="toggleCart()">
+          🛒 Order (<span id="cartCount">0</span>)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main style="padding-top: 40px;">
+    
+    <div class="section-title">
+      <div>The Intelligent <span>Digital Menu</span></div>
+      <div style="font-size: 14px; color: var(--text-muted); font-weight: normal;">
+        Filter by dietary preference, search by ingredient, or explore sommelier pairings
+      </div>
+    </div>
+
+    <!-- CONTROLS & SEARCH BAR -->
+    <div class="controls-bar">
+      <div class="controls-row">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" placeholder="Search dishes, ingredients, or dietary tags..." oninput="filterMenu()">
+        </div>
+
+        <div class="input-row" style="max-width: 320px;">
+          <select id="sortSelect" onchange="filterMenu()">
+            <option value="default">Sort: Default Chef Ranking</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="calories-asc">Calories: Low to High</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="category-chips" id="categoryChips">
+        <span class="chip active" data-filter="All" onclick="setCategory('All', this)">All Items</span>
+        <span class="chip" data-filter="Starters" onclick="setCategory('Starters', this)">Starters</span>
+        <span class="chip" data-filter="Mains" onclick="setCategory('Mains', this)">Mains</span>
+        <span class="chip" data-filter="Desserts" onclick="setCategory('Desserts', this)">Desserts</span>
+        <span class="chip" data-filter="Beverages" onclick="setCategory('Beverages', this)">Beverages & Cocktails</span>
+        <span class="chip" data-filter="Vegetarian" onclick="setCategory('Vegetarian', this)">🌱 Vegetarian</span>
+        <span class="chip" data-filter="Gluten-Free" onclick="setCategory('Gluten-Free', this)">🌾 Gluten-Free</span>
+        <span class="chip" data-filter="Chef Special" onclick="setCategory('Chef Special', this)">⭐ Chef Specials</span>
+      </div>
+    </div>
+
+    <!-- DISH GRID -->
+    <div class="menu-grid" id="menuGrid">
+      <!-- Dynamically populated -->
+    </div>
+
+  </main>
+
+  <!-- FLOATING TASTING ORDER CART DRAWER -->
+  <div class="order-drawer" id="orderDrawer">
+    <div class="order-header">
+      <h4>🛒 Your Tasting Experience</h4>
+      <button class="btn btn-outline btn-sm" onclick="toggleCart()">✕ Close</button>
+    </div>
+    <div class="order-items" id="cartItemsList">
+      <p style="color: var(--text-dim); font-size: 13px;">Your tasting order is currently empty.</p>
+    </div>
+    <div class="order-footer">
+      <div class="order-total-row">
+        <span>Estimated Total:</span>
+        <span id="cartTotal">$0.00</span>
+      </div>
+      <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="alert('Thank you! Your order has been placed.')">
+        Confirm Order
+      </button>
+    </div>
+  </div>
+
+  <footer>
+    <p>Savory AI &copy; 2026. Built with Python Flask & Azure OpenAI.</p>
+    <p style="margin-top: 6px;"><a href="/">Home</a> • <a href="/menu">Digital Menu</a> • <a href="/sommelier">AI Sommelier</a> • <a href="/admin">Kitchen Admin</a></p>
+  </footer>
+
+  <script>
+    let fullMenu = [];
+    let currentCategory = 'All';
+    let cart = [];
+
+    async function loadMenu() {
+      try {
+        const res = await fetch('/api/menu');
+        fullMenu = await res.json();
+        filterMenu();
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    function setCategory(cat, el) {
+      currentCategory = cat;
+      document.querySelectorAll('#categoryChips .chip').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      filterMenu();
+    }
+
+    function filterMenu() {
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const sort = document.getElementById('sortSelect').value;
+
+      let filtered = fullMenu.filter(item => {
+        const matchesCategory = (currentCategory === 'All') ||
+          (item.category.toLowerCase() === currentCategory.toLowerCase()) ||
+          (item.dietary.some(d => d.toLowerCase() === currentCategory.toLowerCase()));
+
+        const matchesSearch = !search ||
+          item.name.toLowerCase().includes(search) ||
+          item.description.toLowerCase().includes(search) ||
+          item.dietary.some(d => d.toLowerCase().includes(search));
+
+        return matchesCategory && matchesSearch;
+      });
+
+      if(sort === 'price-asc') filtered.sort((a,b) => a.price - b.price);
+      if(sort === 'price-desc') filtered.sort((a,b) => b.price - a.price);
+      if(sort === 'calories-asc') filtered.sort((a,b) => a.calories - b.calories);
+
+      renderGrid(filtered);
+    }
+
+    function renderGrid(items) {
+      const grid = document.getElementById('menuGrid');
+      if (items.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-muted);">No dishes match your active filter criteria.</div>`;
+        return;
+      }
+
+      grid.innerHTML = items.map(item => `
+        <div class="dish-card">
+          <img src="${item.image_url}" alt="${item.name}" class="dish-thumb" onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80'">
+          <div class="dish-body">
+            <div class="dish-meta">
+              <span class="dish-category">${item.category}</span>
+              <span class="dish-price">$${item.price.toFixed(2)}</span>
+            </div>
+            <h3 class="dish-title">${item.name}</h3>
+            <p class="dish-desc">${item.description}</p>
+            
+            <div class="dietary-tags">
+              ${item.dietary.map(d => `<span class="tag ${d.toLowerCase().replace(' ', '-')}">${d}</span>`).join('')}
+            </div>
+
+            <div class="dish-pairing">
+              <strong>Sommelier Pairing:</strong> ${item.pairing}
+            </div>
+
+            <div class="dish-footer">
+              <span class="calories-badge">🔥 ${item.calories} kcal</span>
+              <button class="btn btn-primary btn-sm" onclick="addToCart(${item.id})">+ Add to Order</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addToCart(dishId) {
+      const dish = fullMenu.find(d => d.id === dishId);
+      if(!dish) return;
+      cart.push(dish);
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      document.getElementById('cartCount').innerText = cart.length;
+      const list = document.getElementById('cartItemsList');
+      if (cart.length === 0) {
+        list.innerHTML = '<p style="color: var(--text-dim); font-size: 13px;">Your tasting order is currently empty.</p>';
+        document.getElementById('cartTotal').innerText = '$0.00';
+        return;
+      }
+      let total = 0;
+      list.innerHTML = cart.map((item, idx) => {
+        total += item.price;
+        return `
+          <div class="order-item-row">
+            <div><strong>${item.name}</strong></div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span>$${item.price.toFixed(2)}</span>
+              <button class="btn btn-outline btn-sm" onclick="removeFromCart(${idx})">✕</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('cartTotal').innerText = '$' + total.toFixed(2);
+    }
+
+    function removeFromCart(idx) {
+      cart.splice(idx, 1);
+      updateCartUI();
+    }
+
+    function toggleCart() {
+      const drawer = document.getElementById('orderDrawer');
+      drawer.classList.toggle('open');
+    }
+
+    loadMenu();
+  </script>
+</body>
+</html>

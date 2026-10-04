@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Savory AI | Next-Gen Intelligent Dining & Revenue Engine</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <!-- HEADER & NAVBAR -->
+  <header>
+    <div class="nav-container">
+      <a href="/" class="brand">
+        <div class="brand-logo">✨</div>
+        <div class="brand-title">Savory <span>AI</span></div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="/" class="nav-link active">Home</a>
+        <a href="/menu" class="nav-link">Digital Menu</a>
+        <a href="/sommelier" class="nav-link">AI Sommelier</a>
+        <a href="/admin" class="nav-link">Kitchen Admin</a>
+      </nav>
+
+      <div class="nav-actions">
+        <div class="status-badge">
+          <span class="dot online" id="statusDot"></span>
+          <span id="statusText">Azure AI Powered</span>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="toggleCart()">
+          🛒 Order (<span id="cartCount">0</span>)
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div>
+      <div class="hero-eyebrow">
+        <span>✨ Michelin-Inspired AI Dining Platform</span>
+      </div>
+      <h1>Next-Gen Intelligent Gastronomy</h1>
+      <p>Powered by Azure OpenAI. Personal taste profiling for diners, instant Sommelier pairings, sensory flavor breakdown, and revenue optimization for restaurant clients.</p>
+      
+      <div class="quick-chips">
+        <span class="chip" onclick="askPreset('Recommend a romantic 3-course dinner with wine pairings in simple English.')">🍷 Romantic 3-Course</span>
+        <span class="chip" onclick="askPreset('What are your best Gluten-Free & high protein dishes?')">🌾 Gluten-Free & High Protein</span>
+        <span class="chip" onclick="askPreset('Suggest a low-calorie vegetarian starter and cocktail.')">🥗 Vegetarian & Cocktail</span>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 16px;">
+        <a href="/menu" class="btn btn-primary">Explore Intelligent Menu</a>
+        <button class="btn btn-secondary" onclick="toggleChat()">💬 Ask AI Concierge</button>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-box">
+        <div class="stat-num" id="statDishes">8</div>
+        <div class="stat-label">Artisanal Dishes</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Azure AI Powered</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">AI</div>
+        <div class="stat-label">Taste Profiling</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">Instant</div>
+        <div class="stat-label">Sommelier Pairings</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN CONTENT -->
+  <main>
+
+    <!-- CUSTOMER POWER AI SECTION 1: PERSONAL TASTE PROFILER & MEAL BUILDER -->
+    <div class="tool-card" style="margin-bottom: 32px; background: linear-gradient(135deg, var(--bg-card) 0%, #151f1c 100%);">
+      <h3>🎯 AI Personal Taste Profiler & Custom Meal Builder</h3>
+      <p>Tell the AI your budget, mood, and dietary preference to curate a custom multi-course meal package with exact prices and calorie counts.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 14px;">
+        <div>
+          <label style="font-size: 11px; color: var(--accent-gold); display: block; margin-bottom: 4px;">Max Budget ($):</label>
+          <input type="number" id="profilerBudget" value="65" style="width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-subtle); padding: 8px; border-radius: 6px; color: #fff;">
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--accent-gold); display: block; margin-bottom: 4px;">Dining Vibe / Style:</label>
+          <select id="profilerVibe" style="width: 100%;">
+            <option value="Romantic Date Night">Romantic Date Night</option>
+            <option value="High Protein Fitness">High Protein Fitness</option>
+            <option value="Quick Gourmet Lunch">Quick Gourmet Lunch</option>
+            <option value="Chef Special Tasting">Chef Special Tasting</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size: 11px; color: var(--accent-gold); display: block; margin-bottom: 4px;">Dietary Restriction:</label>
+          <select id="profilerDiet" style="width: 100%;">
+            <option value="Any">Any Preference</option>
+            <option value="Gluten-Free">Gluten-Free Only</option>
+            <option value="Vegetarian">Vegetarian Only</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="buildPersonalMealPlan()">
+        ✨ Build My AI Curated Meal Package
+      </button>
+
+      <div class="ai-result-box" id="profilerResultBox"></div>
+    </div>
+
+    <!-- CUSTOMER POWER AI SECTION 2: DISH EXPLAINER & SENSORY FLAVOR ANALYSIS -->
+    <div class="ai-tools-grid">
+      <!-- English Culinary Dish Explainer Tool -->
+      <div class="tool-card">
+        <h3>💡 AI Dish & Culinary Term Explainer</h3>
+        <p>Unsure what a dish or ingredient is? Get a simple, easy-to-understand English explanation.</p>
+        <div class="input-row">
+          <input type="text" id="explainInput" placeholder="e.g. Burrata, Wagyu, Gnocchi, Beurre Blanc">
+          <button class="btn btn-primary btn-sm" onclick="explainTerm()">Explain in English</button>
+        </div>
+        <div class="ai-result-box" id="explainResult"></div>
+      </div>
+
+      <!-- AI Sensory Flavor & Texture Breakdown Tool -->
+      <div class="tool-card">
+        <h3>📊 AI Sensory Flavor & Texture Breakdown</h3>
+        <p>Select any dish to evaluate AI-analyzed Umami, Spice, Richness, and Acidity scores.</p>
+        <div class="input-row">
+          <select id="sensoryDishSelect" style="flex: 1;">
+            <option value="Prime Wagyu Ribeye Steak">Prime Wagyu Ribeye Steak</option>
+            <option value="Truffle Burrata & Heirloom Tomatoes">Truffle Burrata</option>
+            <option value="Pan-Seared Chilean Sea Bass">Chilean Sea Bass</option>
+            <option value="Charred Fiery Paneer Tikka">Fiery Paneer Tikka</option>
+          </select>
+          <button class="btn btn-secondary btn-sm" onclick="analyzeSensory()">Analyze Flavor</button>
+        </div>
+        <div class="ai-result-box" id="sensoryResult"></div>
+      </div>
+    </div>
+
+    <!-- FEATURED DISHES SECTION -->
+    <div class="section-title">
+      <div>Featured <span>Intelligent Menu</span></div>
+      <a href="/menu" class="btn btn-outline btn-sm">View Full Menu →</a>
+    </div>
+
+    <div class="menu-grid" id="featuredGrid">
+      <!-- Loaded dynamically via JS -->
+    </div>
+
+  </main>
+
+  <!-- FLOATING TASTING ORDER CART DRAWER -->
+  <div class="order-drawer" id="orderDrawer">
+    <div class="order-header">
+      <h4>🛒 Your Tasting Experience</h4>
+      <button class="btn btn-outline btn-sm" onclick="toggleCart()">✕ Close</button>
+    </div>
+    <div class="order-items" id="cartItemsList">
+      <p style="color: var(--text-dim); font-size: 13px;">Your tasting order is currently empty.</p>
+    </div>
+    <div class="order-footer">
+      <div class="order-total-row">
+        <span>Estimated Total:</span>
+        <span id="cartTotal">$0.00</span>
+      </div>
+      <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="alert('Thank you! Your intelligent tasting order has been sent to the kitchen.')">
+        Confirm Tasting Order
+      </button>
+    </div>
+  </div>
+
+  <!-- FLOATING CHAT CONCIERGE MODAL -->
+  <div class="chat-modal" id="chatModal">
+    <div class="chat-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 18px;">👨‍🍳</span>
+        <div>
+          <div style="font-weight: 700; font-size: 14px; color: #fff;">AI Head Concierge</div>
+          <div style="font-size: 11px; color: var(--accent-gold);">Powered by Azure OpenAI</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="toggleChat()">✕</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">
+        Welcome to Savory AI! I am your AI Head Concierge. Ask me anything about our dishes, ingredients, or drink pairings in simple English!
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" placeholder="Ask about dishes, wine pairings, dietary options in English..." onkeypress="handleChatKey(event)">
+      <button class="btn btn-primary btn-sm" onclick="sendChatMessage()">Send</button>
+    </div>
+  </div>
+
+  <button class="floating-chat-btn" onclick="toggleChat()" title="Ask AI Concierge">
+    💬
+  </button>
+
+  <footer>
+    <p>Savory AI &copy; 2026. Built with Python Flask & Azure OpenAI.</p>
+    <p style="margin-top: 6px;"><a href="/">Home</a> • <a href="/menu">Digital Menu</a> • <a href="/sommelier">AI Sommelier</a> • <a href="/admin">Kitchen Admin</a></p>
+  </footer>
+
+  <script>
+    let activeMenu = [];
+    let cart = [];
+
+    async function loadStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        if(data.ai_enabled) {
+          document.getElementById('statusDot').className = 'dot online';
+          document.getElementById('statusText').innerText = 'Azure OpenAI Active (' + data.text_model + ')';
+        } else {
+          document.getElementById('statusDot').className = 'dot';
+          document.getElementById('statusText').innerText = 'Demo Mode';
+        }
+        document.getElementById('statDishes').innerText = data.menu_items_count || 8;
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    async function loadMenu() {
+      try {
+        const res = await fetch('/api/menu');
+        activeMenu = await res.json();
+        renderFeaturedMenu(activeMenu);
+        populateDishSelects();
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    function renderFeaturedMenu(items) {
+      const grid = document.getElementById('featuredGrid');
+      grid.innerHTML = items.slice(0, 6).map(item => `
+        <div class="dish-card">
+          <img src="${item.image_url}" alt="${item.name}" class="dish-thumb" onerror="this.src='https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80'">
+          <div class="dish-body">
+            <div class="dish-meta">
+              <span class="dish-category">${item.category}</span>
+              <span class="dish-price">$${item.price.toFixed(2)}</span>
+            </div>
+            <h3 class="dish-title">${item.name}</h3>
+            <p class="dish-desc">${item.description}</p>
+            
+            <div class="dietary-tags">
+              ${item.dietary.map(d => `<span class="tag ${d.toLowerCase().replace(' ', '-')}">${d}</span>`).join('')}
+            </div>
+
+            <div class="dish-pairing">
+              <strong>Sommelier Pairing:</strong> ${item.pairing}
+            </div>
+
+            <div class="dish-footer">
+              <span class="calories-badge">🔥 ${item.calories} kcal</span>
+              <button class="btn btn-primary btn-sm" onclick="addToCart(${item.id})">+ Add to Order</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function populateDishSelects() {
+      const sel = document.getElementById('sensoryDishSelect');
+      if (sel && activeMenu.length > 0) {
+        sel.innerHTML = activeMenu.map(i => `<option value="${i.name}">${i.name}</option>`).join('');
+      }
+    }
+
+    function addToCart(dishId) {
+      const dish = activeMenu.find(d => d.id === dishId);
+      if(!dish) return;
+      cart.push(dish);
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      document.getElementById('cartCount').innerText = cart.length;
+      const list = document.getElementById('cartItemsList');
+      if (cart.length === 0) {
+        list.innerHTML = '<p style="color: var(--text-dim); font-size: 13px;">Your tasting order is currently empty.</p>';
+        document.getElementById('cartTotal').innerText = '$0.00';
+        return;
+      }
+      let total = 0;
+      list.innerHTML = cart.map((item, idx) => {
+        total += item.price;
+        return `
+          <div class="order-item-row">
+            <div><strong>${item.name}</strong></div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span>$${item.price.toFixed(2)}</span>
+              <button class="btn btn-outline btn-sm" onclick="removeFromCart(${idx})">✕</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      document.getElementById('cartTotal').innerText = '$' + total.toFixed(2);
+    }
+
+    function removeFromCart(idx) {
+      cart.splice(idx, 1);
+      updateCartUI();
+    }
+
+    function toggleCart() {
+      const drawer = document.getElementById('orderDrawer');
+      drawer.classList.toggle('open');
+    }
+
+    function toggleChat() {
+      const modal = document.getElementById('chatModal');
+      modal.classList.toggle('open');
+    }
+
+    function askPreset(q) {
+      toggleChat();
+      document.getElementById('chatInput').value = q;
+      sendChatMessage();
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if(!text) return;
+      
+      const msgs = document.getElementById('chatMessages');
+      msgs.innerHTML += `<div class="chat-msg user">${text}</div>`;
+      input.value = '';
+      msgs.scrollTop = msgs.scrollHeight;
+
+      msgs.innerHTML += `<div class="chat-msg bot" id="loadingMsg"><em>Consulting Sommelier & Menu AI...</em></div>`;
+      msgs.scrollTop = msgs.scrollHeight;
+
+      try {
+        const res = await fetch('/api/ask', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({question: text})
+        });
+        const data = await res.json();
+        document.getElementById('loadingMsg').remove();
+        msgs.innerHTML += `<div class="chat-msg bot">${data.answer || data.error}</div>`;
+        msgs.scrollTop = msgs.scrollHeight;
+      } catch(e) {
+        document.getElementById('loadingMsg').remove();
+        msgs.innerHTML += `<div class="chat-msg bot">Apologies, concierge is temporarily unavailable.</div>`;
+      }
+    }
+
+    function handleChatKey(e) {
+      if(e.key === 'Enter') sendChatMessage();
+    }
+
+    async function buildPersonalMealPlan() {
+      const budget = document.getElementById('profilerBudget').value;
+      const vibe = document.getElementById('profilerVibe').value;
+      const diet = document.getElementById('profilerDiet').value;
+      const resBox = document.getElementById('profilerResultBox');
+
+      resBox.style.display = 'block';
+      resBox.innerText = `Consulting Azure OpenAI to curate your ${vibe} package under $${budget}...`;
+
+      try {
+        const res = await fetch('/api/ai/personal-dining-plan', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({budget: budget, vibe: vibe, dietary: diet})
+        });
+        const data = await res.json();
+        if(data.success && data.plan) {
+          const p = data.plan;
+          resBox.innerHTML = `
+            <div style="font-weight: 800; color: var(--accent-gold); font-size: 15px; margin-bottom: 6px;">✨ ${p.plan_name}</div>
+            <div style="margin-bottom: 8px; font-size: 13px;"><strong>Curated Dishes:</strong> ${p.items.join(' + ')}</div>
+            <div style="display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+              <span>💵 Total: <strong>$${p.total_price.toFixed(2)}</strong></span>
+              <span>🔥 Total Calories: <strong>${p.total_calories} kcal</strong></span>
+            </div>
+            <div style="font-size: 13px; font-style: italic; color: #fff;">"${p.reasoning}"</div>
+          `;
+        } else {
+          resBox.innerText = `Error building meal plan.`;
+        }
+      } catch(e) {
+        resBox.innerText = `Service error building dining plan.`;
+      }
+    }
+
+    async function explainTerm() {
+      const term = document.getElementById('explainInput').value.trim();
+      const resBox = document.getElementById('explainResult');
+
+      if(!term) {
+        alert('Please enter a dish name or ingredient to explain.');
+        return;
+      }
+
+      resBox.style.display = 'block';
+      resBox.innerText = `Asking AI to explain "${term}" in simple English...`;
+
+      try {
+        const res = await fetch('/api/explain', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({dish_name: term})
+        });
+        const data = await res.json();
+        resBox.innerText = data.explanation || data.error;
+      } catch(e) {
+        resBox.innerText = `Explanation service error.`;
+      }
+    }
+
+    async function analyzeSensory() {
+      const dish = document.getElementById('sensoryDishSelect').value;
+      const resBox = document.getElementById('sensoryResult');
+
+      resBox.style.display = 'block';
+      resBox.innerText = `Evaluating flavor & texture radar for "${dish}"...`;
+
+      try {
+        const res = await fetch('/api/ai/dish-sensory-breakdown', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({dish_name: dish})
+        });
+        const data = await res.json();
+        if(data.success && data.sensory) {
+          const s = data.sensory;
+          resBox.innerHTML = `
+            <div style="font-weight: 700; color: #fff; margin-bottom: 6px;">Sensory Flavor Profile for ${dish}:</div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 11px; margin-bottom: 8px;">
+              <div>🥩 Umami: <strong>${s.umami}/10</strong></div>
+              <div>🧈 Richness: <strong>${s.richness}/10</strong></div>
+              <div>🌶️ Spice: <strong>${s.spice}/10</strong></div>
+              <div>🍬 Sweetness: <strong>${s.sweetness}/10</strong></div>
+              <div>🍋 Acidity: <strong>${s.acidity}/10</strong></div>
+              <div>🥜 Crunch: <strong>${s.crunch}/10</strong></div>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted);"><em>${s.sensory_notes}</em></div>
+          `;
+        } else {
+          resBox.innerText = `Sensory analysis unavailable.`;
+        }
+      } catch(e) {
+        resBox.innerText = `Sensory service error.`;
+      }
+    }
+
+    loadStatus();
+    loadMenu();
+  </script>
+</body>
+</html>
