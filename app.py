@@ -694,6 +694,7 @@ def allergen_check():
 # ============================================================
 
 if __name__ == "__main__":
-    print("Starting Intelligent Restaurant Menu Backend (Full Power AI)...")
+    port = int(os.getenv("PORT", 5000))
+    print("Starting Savory AI Backend...")
     print(f"Azure OpenAI Connected: {AI_ENABLED}")
-    app.run(debug=True, host="127.0.0.1", port=5000)
+    app.run(debug=False, host="0.0.0.0", port=port)
